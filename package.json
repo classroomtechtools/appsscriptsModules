@@ -1,0 +1,40 @@
+{
+  "name": "appsscript-module-template",
+  "version": "1.0.0",
+  "repository": "https://github.com/classroomtechtools/appsscript-module-template",
+  "type": "module",
+  "license": {
+    "type": "MIT",
+    "url": "https://spdx.org/licenses/MIT.html"
+  },
+  "ava": {
+    "verbose": true
+  },
+  "scripts": {
+    "test": "ava",
+    "start": "run-s clasp:create",
+    "build": "run-s rm-artifacts bundle generate",
+    "push": "run-s build clasp:push",
+    "rm-artifacts": "rm -fr ./build/*",
+    "bundle": "rollup -c",
+    "generate": "run-p generate:*",
+    "generate:remote": "cp -r ./src/scripts/* ./build/",
+    "clasp:create": "clasp create --rootDir ./build",
+    "clasp:push": "clasp push",
+  },
+  "devDependencies": {
+    "@google/clasp": "^2.3.0",
+    "@rollup/plugin-commonjs": "^12.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-multi-entry": "^3.0.1",
+    "@rollup/plugin-node-resolve": "^8.1.0",
+    "ava": "^3.10.1",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^2.19.0"
+  },
+  "main": "src/modules/index.js",
+  "keywords": [
+    "google",
+    "appsscripts"
+  ]
+}
