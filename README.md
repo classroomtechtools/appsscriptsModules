@@ -1,17 +1,19 @@
 
 # AppsScripts Modules
 
-Create repos that doubles as an npm module and regular appsscipts project. Organize your code in modules and namespaces. Import other npm modules.
+Create repos that double as an npm module and regular appsscipts project. Organize your code in modules and namespaces. Import other npm modules.
 
-Your modules are bundled into `Bundle.js` file, exported in a native AppsScript manner, and availble in your project.
+## Motivation
 
-Then, use this repo to make a second project that builds on your first project.
+The AppsScripts platform is powerful and compelling, but it would be nice to organize our codebase easier and make it more shareable. Using this repo and the included scripts, you get a way to make modules and namespaces, unit test them if that's your thing, and reuse them in your other projects.
 
-## How it works
+## How it woks
 
-It defines two directories for coding: `src/scripts` and `src/modules`. The former should contain files in an AppsScripts project as normal. The latter are javascript files that can `import` and `export`. Anything that is exported from those modules is bundled into one file, `Bundle.js`.
+In a nutshell, it utilizes bundling technology with [rollup](http://rollupjs.org). The AppsScripts platform is one big long script; bundling allows the developer to break things up into namespaces.
 
-The Bundle.js file contains some boilerplate code that creates a global `Import` variable, whose properties are those exported from the modules.
+It works by defining two directories for coding: `src/scripts` and `src/modules`. The latter need `import` and `export` statements that exposes objects so that the former can use them.
+
+The `Bundle.js` file contains some boilerplate code that creates a global `Import` variable, whose properties are those namespaces as exported from the `src/modules/*.js`.
 
 Both directories are combined and placed into `build`. When you push to the appsscripts project, you push everything inside `build`.
 
@@ -51,9 +53,10 @@ function onSubmit (e) {
 ```js
 // src/modules/index.js
 import {inc} from './functions.js'
-export const Namespace = {
+const Namespace = {
     doSomething: inc
 };
+export {Namespace};
 ```
 
 ```js
@@ -96,3 +99,34 @@ The code you need from that project will then be included in `Bundle.js`!
 ## Clasp
 
 You'll probably want to use push your codebase to the cloud. Please note that your `.clasp.json` should use the `rootDir` key to indicate that `./build` should be the source for uploading.
+
+## NPM modules
+
+Note that npm modules have a single point of entry, defined by the `main` key in `project.json`, whereas the bundling settings of this project has a different behaviour. 
+
+When you use `export` anywhere inside a `src/modules/*.js` file, it is available on the `Import` global variable of your AppsScripts project. However, with npm modules, when it is reused as a npm module, you'll only be able to `import` from what is exported in the point of entry.
+
+## Using npm modules
+
+All you have to do is this (after `npm install lodash-es`):
+
+```js
+import { has } from 'lodash-es';
+export {has as obj_has};  // rename it to obj_has
+```
+
+And then in your src area:
+
+```js
+function myFunction () {
+    const {obj_has} = Import;
+    const obj = {'one': {'two': 2}};
+    obj_has(obj, 'one.two');  // true
+}
+```
+
+Note that using esmodules instead of CommonJs modules is preferable, since it will be subject to tree shaking, and thus cut down on amount of code that will end up in `Bundle.js`. The above code adds (only) 1200 lines. If you imported all of lodash, however … 
+
+## TODO
+
+The bundling technology with [esbuild](https://esbuild.github.io) looks like huge performance benefits for the developer. Maybe this repo should use that instead?
