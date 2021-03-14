@@ -8,6 +8,8 @@ is put into build/Bundle.js
  */
 import {inc} from './functions.js'
 
-export const Namespace = {
+const Namespace = {
     doSomething: inc
 };
+
+export {Namespace};
