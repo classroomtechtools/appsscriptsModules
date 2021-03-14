@@ -7,6 +7,14 @@ Your modules are bundled into `Bundle.js` file, exported in a native AppsScript 
 
 Then, use this repo to make a second project that builds on your first project.
 
+## How it works
+
+It defines two directories for coding: `src/scripts` and `src/modules`. The former should contain files in an AppsScripts project as normal. The latter are javascript files that can `import` and `export`. Anything that is exported from those modules is bundled into one file, `Bundle.js`.
+
+The Bundle.js file contains some boilerplate code that creates a global `Import` variable, whose properties are those exported from the modules.
+
+Both directories are combined and placed into `build`. When you push to the appsscripts project, you push everything inside `build`.
+
 ## Getting Started
 
 ### Initialize
@@ -24,6 +32,7 @@ In your local directory:
 4. git pull
 5. npm i
 6. Adjust author info in `package.json`
+7. npm run clasp:create
 
 ### Write code
 
@@ -67,24 +76,23 @@ npm run test
 
 ### Push to AppsScripts project
 
-Clasp functions are included in the scripts for convenience, and to make sure you push from `build/` rather than `/src` as the source:
-
-```
-npm run clasp:create
-npm run clasp:push
-```
-
-Note that 
-
 ```
 npm run push
 ```
-
-Conveniently builds the bundle and then pushes with clasp.
 
 ### Reuse
 
 As long as the `main` key in `package.json` points to the main module (there has to be one, by default it's `index.js`), you can publish your modules as npm modules, which you can then import into your next project!
 
+For example, if you publish it to npm, you can do this in a module area of your next project:
 
+```
+// src/modules/index.js
+import {Namespace} from '@org/moduleName';
+```
 
+The code you need from that project will then be included in `Bundle.js`!
+
+## Clasp
+
+You'll probably want to use push your codebase to the cloud. Please note that your `.clasp.json` should use the `rootDir` key to indicate that `./build` should be the source for uploading.
