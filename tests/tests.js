@@ -1,9 +1,10 @@
 import test from 'ava';
-import {anything} from '../src/modules/index.js';
+import {Namespace} from '../src/modules/index.js';
 
 
-test("test anything", async t => {
+test("test increment", async t => {
     // test with anything
-    console.log('outputting to stdout:', anything);
-    t.pass();
+    const actual = Namespace.doSomething(10);
+    const expected = 11;
+    t.is(actual, expected);
 });

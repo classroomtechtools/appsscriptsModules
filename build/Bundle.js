@@ -7,6 +7,12 @@ const Import = Object.create(null);
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var work_js = require('work.js');
+
+const doSomething = () => {
+
+};
+
 /*
 
 This directory (src/modules/) is where you can write appsscript function, classes, etc, and export them, just like with es modules.
@@ -16,9 +22,12 @@ is put into build/Bundle.js
 
  */
 
-const anything = {};
+const Namespace = {
+    doSomething: work_js.doSomething
+};
 
-exports.anything = anything;
+exports.Namespace = Namespace;
+exports.doSomething = doSomething;
 
 })(Import, this);
 try{exports.Import = Import;}catch(e){}

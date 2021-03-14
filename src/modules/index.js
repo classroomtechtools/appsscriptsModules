@@ -6,5 +6,8 @@ When the command `npm run build` is executed, all of the code in this directory
 is put into build/Bundle.js
 
  */
+import {inc} from './functions.js'
 
-export const anything = {};
+export const Namespace = {
+    doSomething: inc
+};
