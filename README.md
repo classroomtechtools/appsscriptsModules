@@ -1,4 +1,3 @@
-
 # AppsScripts Modules
 
 Create repos that double as an npm module and regular appsscipts project. Organize your code in modules and namespaces. Import other npm modules.
@@ -7,7 +6,7 @@ Create repos that double as an npm module and regular appsscipts project. Organi
 
 The AppsScripts platform is powerful and compelling, but it would be nice to organize our codebase easier and make it more shareable. Using this repo and the included scripts, you get a way to make modules and namespaces, unit test them if that's your thing, and reuse them in your other projects.
 
-## How it woks
+## How it works
 
 In a nutshell, it utilizes bundling technology with [rollup](http://rollupjs.org). The AppsScripts platform is one big long script; bundling allows the developer to break things up into namespaces.
 
@@ -28,13 +27,13 @@ In github:
 
 In your local directory:
 
-1. git init
-2. git checkout -b main  # may not be necessary if default branch is already "main"
-3. git remote add origin <url>
-4. git pull
-5. npm i
+1. `git init`
+2. `git checkout -b main`  # may not be necessary if default branch is already "main"
+3. `git remote add origin <url>`
+4. `git pull`
+5. `npm i`
 6. Adjust author info in `package.json`
-7. npm run clasp:create
+7. `npm run clasp:create`
 
 ### Write code
 
@@ -126,6 +125,56 @@ function myFunction () {
 ```
 
 Note that using esmodules instead of CommonJs modules is preferable, since it will be subject to tree shaking, and thus cut down on amount of code that will end up in `Bundle.js`. The above code adds (only) 1200 lines. If you imported all of lodash, however … 
+
+## Rollup settings
+
+Rollup is the bundler used in this case, and it adds just a smidge of boilerplate code to your modules so that you can "import" them with the `Import` global.
+
+```js
+{
+	input: ['src/modules/*.js'],
+	treeshake: true,
+	output: {
+		format: 'cjs',
+		file: './build/Bundle.js',
+		banner: 'const Import = Object.create(null);\n',
+		intro: '(function (exports, window) {',
+		outro: '})(Import, this);'
+	},
+	plugins: [multi(), resolve(),commonjs()]  # makes above work
+}	
+```
+
+It makes the `Bundle.js` file, which itself is a CommonJS-style module (one that uses `exports` variable). It uses as a source to build that any JavaScript file in `src/modules/`.
+
+The boilerplate code is found in `banner`, `intro`, and `outro`. So if we write in our module:
+
+```js
+// src/modules/index.js
+const Namespace = {};
+export {Namespace};
+```
+
+The bundler will convert that code to the following:
+
+```js
+const Import = Object.create(null);  # empty obj
+(function (exports, window) {
+
+const Namespace = {};
+exports.Namespace = Namespace;
+
+})(Import, this);
+```
+
+And that's how we have `Import.Namespace` available in our project.
+
+### Note about that `window` variable
+
+Did you notice that `window` variable?
+
+> The `window` variable is available in your modules code, but is not recommended. Use that global wisely.
+
 
 ## TODO
 
